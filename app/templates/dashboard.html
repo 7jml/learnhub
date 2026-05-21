@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-dark">
+            <div class="card-body">
+                <h5>Total Users</h5>
+                <h2>{{ users|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-secondary">
+            <div class="card-body">
+                <h5>Total Courses</h5>
+                <h2>{{ courses|length }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mt-5">
+    <h4>All Courses</h4>
+    <a href="{{ url_for('admin.add_course') }}" class="btn btn-dark">+ Add Course</a>
+</div>
+<table class="table table-bordered mt-2">
+    <thead class="table-dark">
+        <tr><th>ID</th><th>Title</th><th>Instructor</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+        {% for course in courses %}
+        <tr>
+            <td>{{ course.id }}</td>
+            <td>{{ course.title }}</td>
+            <td>{{ course.instructor }}</td>
+            <td>
+                <a href="{{ url_for('admin.edit_course', id=course.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{{ url_for('admin.delete_course', id=course.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Delete this course?')">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h4 class="mt-4">All Users</h4>
+<table class="table table-bordered mt-2">
+    <thead class="table-dark">
+        <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th></tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+            <td><span class="badge bg-{{ 'danger' if u.role == 'admin' else 'secondary' }}">{{ u.role }}</span></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
