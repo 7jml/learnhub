@@ -4,7 +4,7 @@ from app.models import User
 from flask_login import login_user, logout_user, login_required
 
 auth = Blueprint('auth', __name__)
-
+from app import limiter
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -19,6 +19,7 @@ def register():
     return render_template('register.html')
 
 @auth.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
 def login():
     if request.method == 'POST':
         user = User.query.filter_by(email=request.form['email']).first()
