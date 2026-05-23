@@ -1,0 +1,29 @@
+name: LearnHub CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd /home/ubuntu/learnhub
+            git pull origin main
+            docker stop learnhub-container || true
+            docker rm learnhub-container || true
+            docker build -t learnhub:latest .
+            docker run -d -p 5001:5000 --name learnhub-container --env-file /home/ubuntu/learnhub/.env learnhub:latest
+            echo "Deployment successful!"
